@@ -1,73 +1,45 @@
-# React + TypeScript + Vite
+# Task Flow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Task Flow** is a professional, high-performance PWA for daily task management. Built with TypeScript and React, it ensures type safety and a clean "Clean Professional" aesthetic.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+*   **Daily Quotes**: Fetches inspirational quotes (cached for offline).
+*   **Task Management**: Add, view, and delete tasks.
+*   **Smart Deadlines**:
+    *   🔴 **Red**: Overdue
+    *   🟠 **Orange**: Due in <= 3 days
+    *   🟡 **Yellow**: Due in <= 7 days
+    *   🟢 **Green**: Safe
+*   **Offline First**: Works completely offline using Native IndexedDB and Service Workers.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **Core**: React + TypeScript (Vite)
+*   **Styling**: Vanilla CSS (CSS Variables, Professional Blue Theme)
+*   **Storage**: Native IndexedDB (Wrappers in `src/db.ts`)
+*   **PWA**: Web App Manifest + Custom Service Worker
 
-## Expanding the ESLint configuration
+## Setup & Running
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2.  **Start Development Server**:
+    ```bash
+    npm run dev
+    ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3.  **Build for Production**:
+    ```bash
+    npm run build
+    npm run preview
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Testing Instructions
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1.  **Offline Banner**: Turn off WiFi. A red banner "You are currently offline" will appear at the bottom.
+2.  **PWA Install**: Look for the Install icon in the browser address bar.
+3.  **Persistence**: Add tasks, close the browser, and reopen. Tasks remain (IndexedDB).
