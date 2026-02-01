@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTasks, deleteTask } from '../db';
-import { Task } from '../types';
+import { getAllTasks, updateTask } from '../db';
+import type { Task } from '../types';
 
 interface TaskBoardProps {
     refreshKey: number;
@@ -9,17 +9,27 @@ interface TaskBoardProps {
 const TaskBoard: React.FC<TaskBoardProps> = ({ refreshKey }) => {
     const [tasks, setTasks] = useState<Task[]>([]);
 
-    useEffect(() => {
+    const fetchTasks = () => {
         getAllTasks().then(data => {
-            const sorted = data.sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+            const activeTasks = data.filter(task => !task.isCompleted);
+            const sorted = activeTasks.sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
             setTasks(sorted);
         });
+    };
+
+    useEffect(() => {
+        fetchTasks();
     }, [refreshKey]);
 
-    const handleDelete = async (id: number) => {
-        if (confirm('Delete task?')) {
-            await deleteTask(id);
-            getAllTasks().then(data => setTasks(data.sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())));
+    const handleComplete = async (task: Task) => {
+        if (!task.id) return;
+
+        try {
+            await updateTask({ ...task, isCompleted: true });
+            fetchTasks();
+        } catch (error) {
+            console.error("Error completing task:", error);
+            alert("Failed to update task. Please try again.");
         }
     };
 
@@ -54,8 +64,19 @@ const TaskBoard: React.FC<TaskBoardProps> = ({ refreshKey }) => {
                                 Due: {task.deadline}
                             </span>
                         </div>
-                        <button onClick={() => handleDelete(task.id!)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '1.2rem' }}>
-                            &times;
+                        <button
+                            onClick={() => handleComplete(task)}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                color: 'var(--success-color)',
+                                fontSize: '1.5rem',
+                                cursor: 'pointer',
+                                padding: '0 0.5rem'
+                            }}
+                            title="Mark as Completed"
+                        >
+                            &#10003;
                         </button>
                     </div>
                 );

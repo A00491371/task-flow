@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 const FALLBACK_QUOTES = [
     { content: "Productivity is being able to do things that you were never able to do before.", author: "Franz Kafka" },
-    { content: "Focus on being productive instead of busy.", author: "Tim Ferriss" }
+    { content: "Focus on being productive instead of busy.", author: "Tim Ferriss" },
+    { content: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+    { content: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+    { content: "Code is like humor. When you have to explain it, it’s bad.", author: "Cory House" }
 ];
 
 const QuoteWidget: React.FC = () => {
@@ -11,19 +14,20 @@ const QuoteWidget: React.FC = () => {
     useEffect(() => {
         const fetchQuote = async () => {
             try {
-                const response = await fetch('https://api.quotable.io/random');
+                // Using dummyjson as it is more reliable
+                const response = await fetch('https://dummyjson.com/quotes/random');
                 if (!response.ok) throw new Error('API Error');
                 const data = await response.json();
-                setQuote(data);
-                localStorage.setItem('cachedQuote', JSON.stringify(data));
+
+                // Map dummyjson format (quote) to our format (content)
+                const newQuote = { content: data.quote, author: data.author };
+                setQuote(newQuote);
+                localStorage.setItem('cachedQuote', JSON.stringify(newQuote));
             } catch (error) {
                 console.log("Using fallback quote", error);
-                const cached = localStorage.getItem('cachedQuote');
-                if (cached) {
-                    setQuote(JSON.parse(cached));
-                } else {
-                    setQuote(FALLBACK_QUOTES[0]);
-                }
+                // Always pick a random fallback on error to ensure variety
+                const randomIndex = Math.floor(Math.random() * FALLBACK_QUOTES.length);
+                setQuote(FALLBACK_QUOTES[randomIndex]);
             }
         };
         fetchQuote();

@@ -1,4 +1,4 @@
-import { Task } from './types';
+import type { Task } from './types';
 
 const DB_NAME = 'TaskFlowDB';
 const DB_VERSION = 1;
@@ -50,6 +50,18 @@ export const deleteTask = async (id: number): Promise<void> => {
         const transaction = db.transaction([STORE_NAME], 'readwrite');
         const store = transaction.objectStore(STORE_NAME);
         const request = store.delete(id);
+
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+};
+
+export const updateTask = async (task: Task): Promise<void> => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.put(task);
 
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);

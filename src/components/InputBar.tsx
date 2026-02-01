@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { addTask } from '../db';
-import { Task } from '../types';
 
 interface InputBarProps {
     onTaskAdded: () => void;

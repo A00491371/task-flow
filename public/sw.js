@@ -1,4 +1,4 @@
-const CACHE_NAME = 'task-flow-v1';
+const CACHE_NAME = 'task-flow-v3';
 const ASSETS = [
     '/',
     '/index.html',
@@ -7,14 +7,14 @@ const ASSETS = [
     '/icon-512.png'
 ];
 
-self.addEventListener('install', (event: any) => {
+self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
     );
 });
 
-self.addEventListener('activate', (event: any) => {
+self.addEventListener('activate', (event) => {
     self.clients.claim();
     event.waitUntil(
         caches.keys().then((keys) => {
@@ -27,9 +27,9 @@ self.addEventListener('activate', (event: any) => {
     );
 });
 
-self.addEventListener('fetch', (event: any) => {
+self.addEventListener('fetch', (event) => {
     // API Strategy: Network only (let it fail if offline, component handles fallback)
-    if (event.request.url.includes('api.quotable.io')) {
+    if (event.request.url.includes('api.quotable.io') || event.request.url.includes('dummyjson.com')) {
         return;
     }
 
