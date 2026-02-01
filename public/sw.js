@@ -1,4 +1,4 @@
-const CACHE_NAME = 'task-flow-v3';
+const CACHE_NAME = 'task-flow-v4';
 const ASSETS = [
     '/',
     '/index.html',
@@ -28,8 +28,21 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    // API Strategy: Network only (let it fail if offline, component handles fallback)
+    // API Strategy: Network First -> Cache Fallback (for quotes)
     if (event.request.url.includes('api.quotable.io') || event.request.url.includes('dummyjson.com')) {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    // clone response to put in cache
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    return response;
+                })
+                .catch(() => {
+                    // if network fails, try cache
+                    return caches.match(event.request);
+                })
+        );
         return;
     }
 
